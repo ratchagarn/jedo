@@ -44,7 +44,7 @@ var Test = Jedo.createUI({
   template: function() {
 
     return (
-      '<div class="example=ui">' +
+      '<div class="example-ui">' +
         '<form>' +
           '<input type="text" />' +
           '<button type="submit">Submit</button>' +
