@@ -108,5 +108,4 @@ Users.render('#table-users tbody', _data);
 AddUser.render('#ui-add-user', _data);
 
 
-
 }).call(this);
