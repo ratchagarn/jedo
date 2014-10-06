@@ -28,7 +28,6 @@ var Test = Jedo.createUI({
     }.bind(this));
   },
 
-
   afterUpdate: function() {
     this.$node.find('input').focus();
   },
