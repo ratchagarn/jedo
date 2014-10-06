@@ -15,7 +15,7 @@ Jedo
 
 ## Example
 
-```
+```javascript
 var Test = Jedo.createUI({
 
   afterRender: function() {
