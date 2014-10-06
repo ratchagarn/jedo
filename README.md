@@ -2,6 +2,7 @@ Jedo
 ====
 
 # Simple Javascript template component
+- require `jQuery` version 2.0.x
 
 ### Current Version: 0.0.2
 
@@ -19,6 +20,10 @@ Jedo
 ## Example
 
 ```javascript
+<script src="jedo.js"></script>
+<script>
+'use strict';
+
 var Test = Jedo.createUI({
 
   afterRender: function() {
@@ -52,4 +57,5 @@ var Test = Jedo.createUI({
 });
 
 Test.render(document.body, { start_text: 'Hello world' });
+</script>
 ```
