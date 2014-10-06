@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JavaScript Template</title>
+  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" />
+  <style type="text/css">
+    #table-users .no {
+      width: 5%;
+    }
+    #table-users .name {
+      width: 65%;
+    }
+    #table-users .salaly {
+      width: 30%;
+      text-align: right;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+
+    <div class="row">
+      <div class="col-md-12">
+        <h1 class="page-header">JavaScript Template</h1>
+      </div>
+    </div>
+
+
+    <div class="row">
+      <div class="col-md-12">
+
+        <div class="responsive-table">
+
+          <table id="table-users" class="table">
+            <thead>
+              <th class="no">#</th>
+              <th class="name">Name</th>
+              <th class="salaly">Salaly</th>
+            </thead>
+            <tbody>
+            </tbody>
+          </table>
+
+        </div>
+
+        <div id="ui-add-user"></div>
+
+      </div>
+    </div>
+    
+  </div>
+
+  <script src="bower_components/jquery/dist/jquery.js"></script>
+  <script src="dist/jedo.js"></script>
+  <script src="script.js"></script>
+
+</body>
+</html>

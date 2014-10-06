@@ -1,0 +1,20 @@
+{
+  "name": "jedo",
+  "version": "0.0.1",
+  "homepage": "https://github.com/ratchagarn/jedo",
+  "authors": [
+    "Ratchagarn <ratchagarn@gmail.com>"
+  ],
+  "description": "Simple template component",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "2.1.1"
+  }
+}
