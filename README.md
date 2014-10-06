@@ -8,9 +8,12 @@ Jedo
 
 ## Change log
 
+
+### 0.0.2
+- Add callback for `update` method.
+
 ### 0.0.1
 - Init project.
-- Add callback for `update` method.
 
 
 ## Example
