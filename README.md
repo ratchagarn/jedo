@@ -9,8 +9,8 @@ Jedo
 ## Change log
 
 ### 0.0.1
-- Init project
-- Add callback for `update` method
+- Init project.
+- Add callback for `update` method.
 
 
 ## Example
@@ -27,7 +27,6 @@ var Test = Jedo.createUI({
 
     }.bind(this));
   },
-
 
   afterUpdate: function() {
     this.$node.find('input').focus();
