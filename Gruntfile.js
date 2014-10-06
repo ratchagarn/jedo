@@ -6,10 +6,16 @@ module.exports = function(grunt) {
 
     pkg: grunt.file.readJSON('package.json'),
     banner: '/*!\n' +
-            ' * Jedo v<%= pkg.version %>\n' +
-            ' * Copyright 2014-Preset %> <%= pkg.author %>\n' +
+            ' * Jedo version <%= pkg.version %>\n' +
+            ' * Copyright 2014-Preset <%= pkg.author %>\n' +
             ' * Licensed under <%= pkg.license %>\n' +
             ' */\n',
+    banner_dist: '\n/*!' +
+                 '  Underscore.js templates as a standalone implementation.\n' +
+                 '  JavaScript micro-templating, similar to John Resig\'s implementation.\n' +
+                 '  Underscore templates documentation: http://documentcloud.github.com/underscore/#template\n' +
+                 '  Modifyed by marlun78\n' +
+                 '*/\n',
 
 
     /**
@@ -69,6 +75,26 @@ module.exports = function(grunt) {
         files: '<%= jshint.src.src %>',
         tasks: ['jshint:src:newer', 'concat']
       }
+    },
+
+
+    /**
+     * ------------------------------------------------------------
+     * Uglify
+     * ------------------------------------------------------------
+     */
+    
+
+    uglify: {
+      options: {
+        banner: '<%= banner + banner_dist %>',
+        sourceMap: false
+      },
+      dist: {
+        files: {
+          'dist/jedo.min.js': ['dist/jedo.js']
+        }
+      }
     }
 
 
@@ -90,12 +116,15 @@ module.exports = function(grunt) {
   // https://github.com/gruntjs/grunt-contrib-jshint
   grunt.loadNpmTasks('grunt-contrib-jshint');
 
+  // https://github.com/gruntjs/grunt-contrib-uglify
+  grunt.loadNpmTasks('grunt-contrib-uglify');
+
 
 
   grunt.registerTask('default', ['jshint']);
 
   grunt.registerTask('dev', ['default', 'watch']);
 
-  grunt.registerTask('dist', ['clean', 'default', 'concat']);
+  grunt.registerTask('dist', ['clean', 'default', 'concat', 'uglify']);
 
 };

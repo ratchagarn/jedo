@@ -1,6 +1,6 @@
 /*!
- * Jedo v0.0.1
- * Copyright 2014-Preset %> Ratchagarn
+ * Jedo version 0.0.1
+ * Copyright 2014-Preset Ratchagarn
  * Licensed under MIT
  */
 /*!
