@@ -58,7 +58,7 @@ module.exports = function(grunt) {
         stripBanners: false
       },
       dist: {
-        src: ['src/tmpl.js', 'src/jedo.js'],
+        src: ['bower_components/microtemplates/index.js', 'src/jedo.js'],
         dest: 'dist/<%= pkg.name %>.js'
       }
     },
