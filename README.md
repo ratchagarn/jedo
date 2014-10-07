@@ -4,10 +4,14 @@ Jedo
 # Simple Javascript template component
 - require `jQuery` version 2.x.x
 
-### Current Version: 0.1.1
+### Current Version: 0.1.2
 
 
 ## Change log
+
+### 0.1.2
+- Update comment of code.
+
 
 ### 0.1.1
 - Fixed bug method `afterUpdate` not working.

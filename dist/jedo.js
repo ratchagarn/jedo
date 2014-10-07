@@ -134,7 +134,7 @@
  */
 
 
-(function(tmpl, $) {
+(function($) {
 
 'use strict';
 
@@ -144,12 +144,13 @@
  * ------------------------------------------------------------
  */
 
-var ID = 0;
-
+var globals = this,
+    ID = 0,
+    tmpl = globals.microtemplate;
 
 
 /**
- * Empty procsss function for use as default callback
+ * Empty procsss function for use as default of callback function
  * ------------------------------------------------------------
  * @name noop
  */
@@ -161,7 +162,7 @@ function noop() {}
  * Generate UI ID
  * ------------------------------------------------------------
  * @name getID
- * @return {String} ui string ID
+ * @return {Number} ui ID number
  */
 
 function getID() {
@@ -179,20 +180,24 @@ function getID() {
  */
 
 function _render(scope, callback) {
+  // compile template
   var tpl = tmpl(scope.template.call(scope), scope.$data),
             result = {};
 
+  // if found node then render HTML to it
   if (scope.$node.length) {
     scope.$node.html(tpl).attr('data-jedo-id', getID());
   }
   else {
     var id = getID();
+    // prepare variable for method `toHTML`
     result = {
       tpl: '<span data-jedo-id=' + id + '>' + tpl + '</span>',
       $node: '[data-jedo-id=' + id + ']'
     };
   }
 
+  // hack process queue
   setTimeout(function() {
     (callback || noop).call(scope);
   });
@@ -240,17 +245,25 @@ var Jedo = {
         scope.$data = data;
         scope.$node = $(selector);
 
+
+        // fire init method
         (settings.init || noop).call(scope);
 
+
+        // render template
         var result = _render(scope, function() {
+
           (callback || noop).call(scope);
           (settings.afterRender || noop).call(scope);
+
           if (result.$node) {
+            // set node element for method `toHTML`for use method `update` later
             scope.$node = $(result.$node);
           }
+
         });
 
-        if (result.tpl) { return result.tpl; }
+        return result;
       },
 
 
@@ -264,7 +277,7 @@ var Jedo = {
       
       toHTML: function(data, callback) {
         if (data == null) { data = {}; }
-        return this.render(undefined, data, callback);
+        return this.render(undefined, data, callback).tpl;
       },
 
 
@@ -293,7 +306,11 @@ var Jedo = {
       
       update: function(data, callback) {
         if (data == null) { data = {}; }
+
+        // extend data to scope
         scope.$data = $.extend({}, scope.$data, data);
+
+        // render update template
         _render(scope, function() {
           (callback || noop).call(scope);
           (settings.afterUpdate || noop).call(scope);
@@ -307,7 +324,7 @@ var Jedo = {
 };
 
 
-window.Jedo = Jedo;
+// assign `Jedo` to globals scope
+globals.Jedo = Jedo;
 
-
-}).call(this, microtemplate, jQuery);
+}).call(this, jQuery);
