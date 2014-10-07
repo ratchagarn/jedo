@@ -79,7 +79,7 @@ var AddUser = Jedo.createUI({
             value = $el.val();
 
         if (!error && value === '') {
-          Alert.update({ text: 'Please complete form.' });
+          Alert.update({ text: 'Please complete form. ' + new Date().getTime()  });
           error = true;
           return;
         }
@@ -102,7 +102,7 @@ var AddUser = Jedo.createUI({
 
     return (
       '<form id="add-user">' +
-        Alert.toHTML() +
+        Alert.attach() +
         '<p>' +
           '<label>Name</label>' +
           '<input type="text" name="name" class="form-control" />' +
@@ -122,9 +122,9 @@ var AddUser = Jedo.createUI({
 
 var Alert = Jedo.createUI({
 
-  init: function() {
+  setData: function() {
 
-    this.$data = {
+    return {
       text: '',
       classes: ' hide'
     };

@@ -17,6 +17,7 @@
 
 var globals = this,
     ID = 0,
+    attach_key = 'data-jedo-attach',
     tmpl = globals.microtemplate;
 
 
@@ -57,20 +58,22 @@ function _render(scope, callback) {
 
   // if found node then render HTML to it
   if (scope.$node.length) {
-    scope.$node.html(tpl).attr('data-jedo-id', getID());
-  }
-  else {
-    var id = getID();
-    // prepare variable for method `toHTML`
-    result = {
-      tpl: '<span data-jedo-id=' + id + '>' + tpl + '</span>',
-      $node: '[data-jedo-id=' + id + ']'
-    };
+    var attach_id = scope.$node.attr(attach_key);
+    if (attach_id) {
+      scope.$node.replaceWith( $(tpl).attr(attach_key, attach_id) );
+      var addition_callback = function() {
+        scope.$node = $('[' + attach_key + '=' + attach_id + ']');
+      };
+    }
+    else {
+      scope.$node.html(tpl);
+    }
   }
 
   // hack process queue
   setTimeout(function() {
     (callback || noop).call(scope);
+    (addition_callback || noop)();
   });
 
   return result;
@@ -90,6 +93,13 @@ var Jedo = {
     // scope variable for sharing context
     var scope = {};
 
+    // set default method `setData`
+    if (settings.setData == null) {
+      settings.setData = function() {
+        return {};
+      };
+    }
+
 
     /**
      * ------------------------------------------------------------
@@ -98,7 +108,6 @@ var Jedo = {
      */
 
     return {
-
 
       /**
        * Render UI
@@ -111,44 +120,46 @@ var Jedo = {
       
       render: function(selector, data, callback) {
 
-        // assign this scope
-        scope = $.extend({}, this, settings);
-        scope.$data = data;
-        scope.$node = $(selector);
-
-
         // fire init method
         (settings.init || noop).call(scope);
 
+        // assign this scope
+        scope = $.extend({}, this, settings);
+        scope.$data = $.extend({}, scope.setData(), data);
+        scope.$node = $(selector);
 
         // render template
-        var result = _render(scope, function() {
-
+        _render(scope, function() {
           (callback || noop).call(scope);
-          (settings.afterRender || noop).call(scope);
-
-          if (result.$node) {
-            // set node element for method `toHTML`for use method `update` later
-            scope.$node = $(result.$node);
-          }
-
+          (scope.afterRender || noop).call(scope);
         });
 
-        return result;
       },
 
 
       /**
-       * Render template to HTML
+       * Attach template to another template
        * ------------------------------------------------------------
        * @name toHTML
        * @param {Object} UI data for template
        * @return {String} HTML of template
        */
       
-      toHTML: function(data, callback) {
+      attach: function(data, callback) {
         if (data == null) { data = {}; }
-        return this.render(undefined, data, callback).tpl;
+        scope = $.extend({}, this, settings);
+        scope.$data = $.extend({}, scope.setData(), data);
+
+        var id = getID(),
+            $tpl = $( this.compile(settings.template.call(scope), scope.$data) )
+                  .attr(attach_key, id);
+
+        setTimeout(function() {
+          scope.$node = $('[' + attach_key + '="' + id + '"]');
+        });
+
+        return $tpl[0].outerHTML;
+        // return this.render(undefined, data, callback).tpl;
       },
 
 

@@ -4,10 +4,16 @@ Jedo
 # Simple Javascript template component
 - require `jQuery` version 2.x.x
 
-### Current Version: 0.1.2
+### Current Version: 0.1.3
 
 
 ## Change log
+
+
+### 0.1.3
+- Change method name from `toHTML` to `attach`.
+- Fixed bug method `attach`.
+
 
 ### 0.1.2
 - Update comment of code.
