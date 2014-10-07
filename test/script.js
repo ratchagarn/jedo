@@ -42,16 +42,21 @@ var Users = Jedo.createUI({
 
   template: function() {
 
-    return (
-      '<% Jedo.map(users, function(user, i) { %>' +
-        '<tr data-index="<%= i %>">' +
-          '<td class="no"><%= (i + 1) %></td>' +
-          '<td class="name"><%= user.name %></td>' +
-          '<td class="salaly"><%= user.salaly %></td>' +
-        '</tr>' +
-      '<% }); %>'
-    );
+    var tpl = [];
 
+    $.map(this.$data.users, function(user, i) {
+
+      var tmp = '<tr data-index="<%= i %>">' +
+                  '<td class="no"><%= (i + 1) %></td>' +
+                  '<td class="name"><%= user.name %></td>' +
+                  '<td class="salaly"><%= user.salaly %></td>' +
+                '</tr>';
+
+      tpl.push( this.compile( tmp, { user: user, i: i } ) );
+
+    }.bind(this));
+
+    return tpl.join('');
   }
 
 });
@@ -65,15 +70,25 @@ var AddUser = Jedo.createUI({
     $node.on('submit', function(e) {
       e.preventDefault();
 
-      var new_user_data = {};
+      var new_user_data = {},
+          error = false;
 
       $node.find('[name]').each(function(i, item) {
         var $el = $(item),
             key = $el.attr('name'),
             value = $el.val();
+
+        if (!error && value === '') {
+          Alert.update({ text: 'Please complete form.' });
+          error = true;
+          return;
+        }
+
         $el.val('');
         new_user_data[key] = value;
       });
+
+      if (error) { return; }
 
       _data.users.push(new_user_data);
       Users.update(_data);
@@ -82,11 +97,12 @@ var AddUser = Jedo.createUI({
     });
   },
 
+
   template: function() {
 
     return (
       '<form id="add-user">' +
-        '<div id="alert" class="alert alert-danger hide"></div>' +
+        Alert.toHTML() +
         '<p>' +
           '<label>Name</label>' +
           '<input type="text" name="name" class="form-control" />' +
@@ -97,6 +113,32 @@ var AddUser = Jedo.createUI({
         '</p>' +
         '<p><button type="submit" class="btn btn-primary" id="add-user">Submit</button></p>' +
       '</form>'
+    );
+
+  }
+
+});
+
+
+var Alert = Jedo.createUI({
+
+  init: function() {
+
+    this.$data = {
+      text: '',
+      classes: ' hide'
+    };
+
+  },
+
+  template: function() {
+
+    if (this.$data.text !== '') {
+      this.$data.classes = '';
+    }
+
+    return (
+      '<div id="alert" class="alert alert-danger<%= classes %>"><%= text %></div>'
     );
 
   }
