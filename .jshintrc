@@ -19,7 +19,6 @@
   "undef": true,
   "globals": {
     "jQuery": true,
-    "microtemplate": true,
     "module": true,
     "require": true
   }
