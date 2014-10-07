@@ -2,12 +2,17 @@ Jedo
 ====
 
 # Simple Javascript template component
-- require `jQuery` version 2.0.x
+- require `jQuery` version 2.x.x
 
-### Current Version: 0.0.2
+### Current Version: 0.1.0
 
 
 ## Change log
+
+### 0.1.0
+- Using microtemplate.
+- Add new method `compile`.
+- Add new method `toHTML`.
 
 
 ### 0.0.2

@@ -1,108 +1,151 @@
 /*!
- * Jedo version 0.0.1
- * Copyright 2014-Preset Ratchagarn
+ * Jedo version 0.1.0
+ * Copyright 2014-Preset
+ * Author: Ratchagarn
  * Licensed under MIT
  */
-/*!
-  Underscore.js templates as a standalone implementation. 
-  JavaScript micro-templating, similar to John Resig's implementation. 
-  Underscore templates documentation: http://documentcloud.github.com/underscore/#template
-  Modifyed by marlun78
-*/
+// Simple JavaScript Templating
+// Paul Miller (http://paulmillr.com)
+// http://underscorejs.org
+// (c) 2009-2013 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+(function(globals) {
+  // By default, Underscore uses ERB-style template delimiters, change the
+  // following template settings to use alternative delimiters.
+  var settings = {
+    evaluate    : /<%([\s\S]+?)%>/g,
+    interpolate : /<%=([\s\S]+?)%>/g,
+    escape      : /<%-([\s\S]+?)%>/g
+  };
 
-(function() {
- 
-'use strict';
+  // When customizing `templateSettings`, if you don't want to define an
+  // interpolation, evaluation or escaping regex, we need one that is
+  // guaranteed not to match.
+  var noMatch = /(.)^/;
 
-// By default, Underscore uses ERB-style template delimiters, change the
-// following template settings to use alternative delimiters.
-var settings = {
-      evaluate: /<%([\s\S]+?)%>/g,
-      interpolate: /<%=([\s\S]+?)%>/g,
-      escape: /<%-([\s\S]+?)%>/g
+  // Certain characters need to be escaped so that they can be put into a
+  // string literal.
+  var escapes = {
+    "'":      "'",
+    '\\':     '\\',
+    '\r':     'r',
+    '\n':     'n',
+    '\t':     't',
+    '\u2028': 'u2028',
+    '\u2029': 'u2029'
+  };
+
+  var escaper = /\\|'|\r|\n|\t|\u2028|\u2029/g;
+
+  // List of HTML entities for escaping.
+  var htmlEntities = {
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#x27;'
+  };
+
+  var entityRe = new RegExp('[&<>"\']', 'g');
+
+  var escapeExpr = function(string) {
+    if (string == null) return '';
+    return ('' + string).replace(entityRe, function(match) {
+      return htmlEntities[match];
+    });
+  };
+
+  var counter = 0;
+
+  // JavaScript micro-templating, similar to John Resig's implementation.
+  // Underscore templating handles arbitrary delimiters, preserves whitespace,
+  // and correctly escapes quotes within interpolated code.
+  var tmpl = function(text, data) {
+    var render;
+
+    // Combine delimiters into one regular expression via alternation.
+    var matcher = new RegExp([
+      (settings.escape || noMatch).source,
+      (settings.interpolate || noMatch).source,
+      (settings.evaluate || noMatch).source
+    ].join('|') + '|$', 'g');
+
+    // Compile the template source, escaping string literals appropriately.
+    var index = 0;
+    var source = "__p+='";
+    text.replace(matcher, function(match, escape, interpolate, evaluate, offset) {
+      source += text.slice(index, offset)
+        .replace(escaper, function(match) { return '\\' + escapes[match]; });
+
+      if (escape) {
+        source += "'+\n((__t=(" + escape + "))==null?'':escapeExpr(__t))+\n'";
+      }
+      if (interpolate) {
+        source += "'+\n((__t=(" + interpolate + "))==null?'':__t)+\n'";
+      }
+      if (evaluate) {
+        source += "';\n" + evaluate + "\n__p+='";
+      }
+      index = offset + match.length;
+      return match;
+    });
+    source += "';\n";
+
+    // If a variable is not specified, place data values in local scope.
+    if (!settings.variable) source = 'with(obj||{}){\n' + source + '}\n';
+
+    source = "var __t,__p='',__j=Array.prototype.join," +
+      "print=function(){__p+=__j.call(arguments,'');};\n" +
+      source + "return __p;\n//# sourceURL=/microtemplates/source[" + counter++ + "]";
+
+    try {
+      render = new Function(settings.variable || 'obj', 'escapeExpr', source);
+    } catch (e) {
+      e.source = source;
+      throw e;
+    }
+
+    if (data) return render(data, escapeExpr);
+    var template = function(data) {
+      return render.call(this, data, escapeExpr);
     };
 
-// When customizing `templateSettings`, if you don't want to define an
-// interpolation, evaluation or escaping regex, we need one that is
-// guaranteed not to match.
-var noMatch = /.^/;
+    // Provide the compiled function source as a convenience for precompilation.
+    template.source = 'function(' + (settings.variable || 'obj') + '){\n' + source + '}';
 
-// Certain characters need to be escaped so that they can be put into a
-// string literal.
-var escapes = {
-    '\\': '\\',
-    "'": "'",
-    'r': '\r',
-    'n': '\n',
-    't': '\t',
-    'u2028': '\u2028',
-    'u2029': '\u2029'
+    return template;
   };
+  tmpl.settings = settings;
 
-
-for (var p in escapes) {
-    escapes[escapes[p]] = p;
-}
-
-var escaper = /\\|'|\r|\n|\t|\u2028|\u2029/g;
-
-var tmpl = function (text, data, objectName) {
-
-  settings.variable = objectName;
-
-  // Compile the template source, taking care to escape characters that
-  // cannot be included in a string literal and then unescape them in code
-  // blocks.
-  var source = "__p+='" + text
-      .replace(escaper, function (match) {
-          return '\\' + escapes[match];
-      })
-      .replace(settings.escape || noMatch, function (match, code) {
-          return "'+\n_.escape(" + unescape(code) + ")+\n'";
-      })
-      .replace(settings.interpolate || noMatch, function (match, code) {
-          return "'+\n(" + unescape(code) + ")+\n'";
-      })
-      .replace(settings.evaluate || noMatch, function (match, code) {
-          return "';\n" + unescape(code) + "\n;__p+='";
-      }) + "';\n";
-
-  // If a variable is not specified, place data values in local scope.
-  if (!settings.variable) {
-      source = 'with(obj||{}){\n' + source + '}\n';
+  if (typeof define !== 'undefined' && define.amd) {
+    define([], function () {
+      return tmpl;
+    }); // RequireJS
+  } else if (typeof module !== 'undefined' && module.exports) {
+    module.exports = tmpl; // CommonJS
+  } else {
+    globals.microtemplate = tmpl; // <script>
   }
+})(this);
 
-  source = "var __p='';var print=function(){__p+=Array.prototype.join.call(arguments, '')};\n" + source + "return __p;\n";
-
-  var render = new Function(settings.variable || 'obj', source);
-
-  if (data) {
-      return render(data);
-  }
-
-  var template = function (data) {
-      return render.call(this, data);
-  };
-
-  // Provide the compiled function source as a convenience for build time
-  // precompilation.
-  template.source = 'function(' + (settings.variable || 'obj') + '){\n' + source + '}';
-
-  return template;
-};
-
-window.tmpl = tmpl;
-
-}).call(this);
 /**
  * ------------------------------------------------------------
  * JEDO
  * ------------------------------------------------------------
  */
 
+
 (function(tmpl, $) {
 
 'use strict';
+
+/**
+ * ------------------------------------------------------------
+ * Global
+ * ------------------------------------------------------------
+ */
+
+var ID = 0;
+
 
 
 /**
@@ -114,6 +157,50 @@ window.tmpl = tmpl;
 function noop() {}
 
 
+/**
+ * Generate UI ID
+ * ------------------------------------------------------------
+ * @name getID
+ * @return {String} ui string ID
+ */
+
+function getID() {
+  return ++ID;
+}
+
+
+/**
+ * Render template
+ * ------------------------------------------------------------
+ * @name _render
+ * @param {Function} template output function
+ * @param {Object} template mount node
+ * @param {Function} callback after template is mount
+ */
+
+function _render(scope, callback) {
+  var tpl = tmpl(scope.template.call(scope), scope.$data),
+            result = {};
+
+  if (scope.$node.length) {
+    scope.$node.html(tpl).attr('data-jedo-id', getID());
+  }
+  else {
+    var id = getID();
+    result = {
+      tpl: '<span data-jedo-id=' + id + '>' + tpl + '</span>',
+      $node: '[data-jedo-id=' + id + ']'
+    };
+  }
+
+  setTimeout(function() {
+    (callback || noop).call(scope);
+  });
+
+  return result;
+}
+
+
 var Jedo = {
 
   /**
@@ -122,9 +209,11 @@ var Jedo = {
    * ------------------------------------------------------------
    */
   
-  createUI: function(setting) {
+  createUI: function(settings) {
 
+    // scope variable for sharing context
     var scope = {};
+
 
     /**
      * ------------------------------------------------------------
@@ -146,34 +235,51 @@ var Jedo = {
       
       render: function(selector, data, callback) {
 
-        scope = $.extend({}, this, setting);
+        // assign this scope
+        scope = $.extend({}, this, settings);
         scope.$data = data;
+        scope.$node = $(selector);
 
-        if (typeof setting.init === 'function') {
-          setting.init.call(scope);
-          setting.init = noop();
-        }
+        (settings.init || noop).call(scope);
 
-        var tpl = tmpl(setting.template.call(scope), data),
-            $mountNode = $(selector);
-        $mountNode.html( tpl );
-
-        setTimeout(function() {
-
-          scope.$node = $mountNode;
-
-          (callback || noop)();
-
-          if (typeof setting.afterRender === 'function') {
-            setting.afterRender.call(scope);
-            setting.afterRender = noop();
+        var result = _render(scope, function() {
+          (callback || noop).call(scope);
+          (settings.afterRender || noop).call(scope);
+          if (result.$node) {
+            scope.$node = $(result.$node);
           }
-          else {
-            (setting.afterUpdate || noop).call(scope);
-          }
-
         });
 
+        if (result.tpl) { return result.tpl; }
+      },
+
+
+      /**
+       * Render template to HTML
+       * ------------------------------------------------------------
+       * @name toHTML
+       * @param {Object} UI data for template
+       * @return {String} HTML of template
+       */
+      
+      toHTML: function(data, callback) {
+        if (data == null) { data = {}; }
+        return this.render(undefined, data, callback);
+      },
+
+
+      /**
+       * Alias of Microtemplates
+       * ------------------------------------------------------------
+       * @name compile
+       * @param {String} template string
+       * @param {Object} data for template
+       * @return {String} string of template
+       */
+
+      compile: function(str, data) {
+        if (data == null) { data = {}; }
+        return tmpl(str, data);
       },
 
 
@@ -188,7 +294,10 @@ var Jedo = {
       update: function(data, callback) {
         if (data == null) { data = {}; }
         scope.$data = $.extend({}, scope.$data, data);
-        scope.render(scope.$node, scope.$data, callback);
+        _render(scope, function() {
+          (callback || noop).call(scope);
+          (settings.afterRenderUpdate || noop).call(scope);
+        });
       }
 
     };
@@ -199,7 +308,6 @@ var Jedo = {
 
 
 window.Jedo = Jedo;
-window.Jedo.map = jQuery.map;
 
 
-}).call(this, tmpl, jQuery);
+}).call(this, microtemplate, jQuery);

@@ -1,6 +1,6 @@
 {
   "name": "jedo",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Jedo JavaScript Template Framework",
   "main": "Gruntfile.js",
   "repository": {
@@ -8,7 +8,7 @@
     "url": "https://github.com/ratchagarn/jedo"
   },
   "dependencies": {
-    "grunt": "^0.4.5",
+    "grunt": "0.4.5",
     "jshint-stylish": "1.0.0"
   },
   "devDependencies": {
