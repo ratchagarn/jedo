@@ -167,7 +167,7 @@ var Jedo = {
         scope.$data = $.extend({}, scope.$data, data);
         _render(scope, function() {
           (callback || noop).call(scope);
-          (settings.afterRenderUpdate || noop).call(scope);
+          (settings.afterUpdate || noop).call(scope);
         });
       }
 

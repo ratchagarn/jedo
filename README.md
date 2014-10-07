@@ -4,10 +4,14 @@ Jedo
 # Simple Javascript template component
 - require `jQuery` version 2.x.x
 
-### Current Version: 0.1.0
+### Current Version: 0.1.1
 
 
 ## Change log
+
+### 0.1.1
+- Fixed bug method `afterUpdate` not working.
+
 
 ### 0.1.0
 - Using microtemplate.
@@ -17,6 +21,7 @@ Jedo
 
 ### 0.0.2
 - Add callback for `update` method.
+
 
 ### 0.0.1
 - Init project.
