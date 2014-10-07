@@ -7,16 +7,10 @@ module.exports = function(grunt) {
     pkg: grunt.file.readJSON('package.json'),
     banner: '/*!\n' +
             ' * Jedo version <%= pkg.version %>\n' +
-            ' * Copyright 2014-Preset <%= pkg.author %>\n' +
+            ' * Copyright 2014-Preset\n' +
+            ' * Author: <%= pkg.author %>\n' +
             ' * Licensed under <%= pkg.license %>\n' +
             ' */\n',
-    banner_dist: '\n/*!' +
-                 '  Underscore.js templates as a standalone implementation.\n' +
-                 '  JavaScript micro-templating, similar to John Resig\'s implementation.\n' +
-                 '  Underscore templates documentation: http://documentcloud.github.com/underscore/#template\n' +
-                 '  Modifyed by marlun78\n' +
-                 '*/\n',
-
 
     /**
      * ------------------------------------------------------------
@@ -87,7 +81,7 @@ module.exports = function(grunt) {
 
     uglify: {
       options: {
-        banner: '<%= banner + banner_dist %>',
+        banner: '<%= banner %>',
         sourceMap: false
       },
       dist: {
