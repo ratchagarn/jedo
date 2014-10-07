@@ -1,6 +1,6 @@
 {
   "name": "jedo",
-  "version": "0.0.1",
+  "version": "0.1.2",
   "homepage": "https://github.com/ratchagarn/jedo",
   "authors": [
     "Ratchagarn <ratchagarn@gmail.com>"
@@ -16,6 +16,6 @@
   ],
   "dependencies": {
     "jquery": "2.1.1",
-    "microtemplates": "~0.1.0"
+    "microtemplates": "0.1.0"
   }
 }
