@@ -4,10 +4,13 @@ Jedo
 # Simple Javascript template component
 - require `jQuery` version 2.x.x
 
-### Current Version: 0.1.3
+### Current Version: 0.1.4
 
 
 ## Change log
+
+### 0.1.4
+- Remove method `attach`.
 
 
 ### 0.1.3

@@ -16,8 +16,6 @@
  */
 
 var globals = this,
-    ID = 0,
-    attach_key = 'data-jedo-attach',
     tmpl = globals.microtemplate;
 
 
@@ -31,18 +29,6 @@ function noop() {}
 
 
 /**
- * Generate UI ID
- * ------------------------------------------------------------
- * @name getID
- * @return {Number} ui ID number
- */
-
-function getID() {
-  return ++ID;
-}
-
-
-/**
  * Render template
  * ------------------------------------------------------------
  * @name _render
@@ -52,31 +38,15 @@ function getID() {
  */
 
 function _render(scope, callback) {
-  // compile template
-  var tpl = tmpl(scope.template.call(scope), scope.$data),
-            result = {};
 
-  // if found node then render HTML to it
-  if (scope.$node.length) {
-    var attach_id = scope.$node.attr(attach_key);
-    if (attach_id) {
-      scope.$node.replaceWith( $(tpl).attr(attach_key, attach_id) );
-      var addition_callback = function() {
-        scope.$node = $('[' + attach_key + '=' + attach_id + ']');
-      };
-    }
-    else {
-      scope.$node.html(tpl);
-    }
-  }
+  // compile template
+  var tpl = tmpl(scope.template.call(scope), scope.$data);
+  scope.$node.html(tpl);
 
   // hack process queue
   setTimeout(function() {
     (callback || noop).call(scope);
-    (addition_callback || noop)();
   });
-
-  return result;
 }
 
 
@@ -134,32 +104,6 @@ var Jedo = {
           (scope.afterRender || noop).call(scope);
         });
 
-      },
-
-
-      /**
-       * Attach template to another template
-       * ------------------------------------------------------------
-       * @name toHTML
-       * @param {Object} UI data for template
-       * @return {String} HTML of template
-       */
-      
-      attach: function(data, callback) {
-        if (data == null) { data = {}; }
-        scope = $.extend({}, this, settings);
-        scope.$data = $.extend({}, scope.setData(), data);
-
-        var id = getID(),
-            $tpl = $( this.compile(settings.template.call(scope), scope.$data) )
-                  .attr(attach_key, id);
-
-        setTimeout(function() {
-          scope.$node = $('[' + attach_key + '="' + id + '"]');
-        });
-
-        return $tpl[0].outerHTML;
-        // return this.render(undefined, data, callback).tpl;
       },
 
 
