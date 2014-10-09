@@ -2,7 +2,7 @@ Jedo
 ====
 
 # Simple Javascript template component
-- require `jQuery` version 2.x.x
+
 
 ### Current Version: 0.2.0
 
@@ -11,6 +11,7 @@ Jedo
 
 
 ### 0.2.0
+- Remove dependency from `jQuery`
 - Fixed many bug and change name of method.
 
 

@@ -18,7 +18,6 @@
   "sub": true,
   "undef": true,
   "globals": {
-    "jQuery": true,
     "module": true,
     "require": true
   }

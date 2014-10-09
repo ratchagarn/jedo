@@ -5,7 +5,7 @@
  */
 
 
-(function($) {
+(function() {
 
 'use strict';
 
@@ -26,6 +26,29 @@ var globals = this,
  */
 
 function noop() {}
+
+
+/**
+ * Deep extend object.
+ * ============================================================
+ * @name extend
+ * @param {Object} destination object.
+ * @param {Object} object for extend to destination.
+ * @return {Object} reference to destination.
+ * See: http://andrewdupont.net/2009/08/28/deep-extending-objects-in-javascript/
+ */
+
+function extend(dst, source) {
+  for (var prop in source) {
+    if (source[prop] && source[prop].constructor && source[prop].constructor === Object) {
+      dst[prop] = dst[prop] || {};
+      extend(dst[prop], source[prop]);
+    } else {
+      dst[prop] = source[prop];
+    }
+  }
+  return dst;
+}
 
 
 /**
@@ -61,7 +84,7 @@ function _render(scope, callback) {
 
   // compile template
   var tpl = tmpl(scope.template.call(scope), scope.$model);
-  scope.$node.html(tpl);
+  scope.$node.innerHTML = tpl;
 
   // hack process queue
   setTimeout(function() {
@@ -105,25 +128,25 @@ var Jedo = {
        * Render UI
        * ------------------------------------------------------------
        * @name render
-       * @param {String} jQuery selector for mountnode
+       * @param {Object} DOM node object
        * @param {Object} UI data
        * @param {Function} Callback after render
        */
       
-      render: function(selector, data, callback) {
-
-        // clone setting and scope for multiple use for another selector
-        var _settings = $.extend( {}, default_setting, clone(settings) ),
-            scope = clone( $.extend( {}, this, _settings ) );
-
-        // assign this to scope
-        scope.$model = $.extend({}, scope.model(), data);
-        scope.$node = $(selector);
+      render: function(node, data, callback) {
 
         // check node exist
-        if (scope.$node.length === 0) {
-          throw new Error('Not found element target for mount UI (your selector is `' + selector + '`)');
+        if (!node) {
+          throw new Error('Not found element target for mount UI');
         }
+
+        // clone setting and scope for multiple use for another selector
+        var _settings = extend( default_setting, clone(settings) ),
+            scope = clone( extend(this, _settings ) );
+
+        // assign this to scope
+        scope.$model = extend( scope.model(), data );
+        scope.$node = node;
 
         // fire init method
         (_settings.init || noop).call(scope);
@@ -167,7 +190,7 @@ var Jedo = {
         if (data == null) { data = {}; }
 
         // extend data to scope
-        scope.$model = $.extend({}, scope.$model, data);
+        scope.$model = extend( scope.$model, data );
 
         // render update template
         _render(scope, function() {
@@ -186,4 +209,4 @@ var Jedo = {
 // assign `Jedo` to globals scope
 globals.Jedo = Jedo;
 
-}).call(this, jQuery);
+}).call(this);
