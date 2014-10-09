@@ -14,8 +14,10 @@ var Counter = Jedo.createUI({
 
 
   sync: function() {
-    var $button = this.$node.find('button'),
-        $count = this.$node.find('span');
+
+    var $node = $(this.$node),
+        $button = $node.find('button'),
+        $count = $node.find('span');
 
     $button.on('click', function() {
       this.update({ count: ++this.$model.count });
@@ -41,7 +43,11 @@ var Counter = Jedo.createUI({
 
 // render UI
 
-Counter.render('#c1');
+var target = document.querySelectorAll('.counter');
+
+for (var i = 0, len = target.length; i < len; i++) {
+  Counter.render( target[i] );
+}
 
 
 }).call(this);
