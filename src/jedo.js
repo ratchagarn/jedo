@@ -29,6 +29,26 @@ function noop() {}
 
 
 /**
+ * Clone object.
+ * ------------------------------------------------------------
+ * @name clone
+ * @param {Object} object is want to clone.
+ * @return {Object} object it is not inherit of another.
+ */
+
+function clone(from) {
+  var name, to;
+  to = {};
+  for (name in from) {
+    if (from.hasOwnProperty(name)) {
+      to[name] = from[name];
+    }
+  }
+  return to;
+}
+
+
+/**
  * Render template
  * ------------------------------------------------------------
  * @name _render
@@ -40,11 +60,12 @@ function noop() {}
 function _render(scope, callback) {
 
   // compile template
-  var tpl = tmpl(scope.template.call(scope), scope.$data);
+  var tpl = tmpl(scope.template.call(scope), scope.$model);
   scope.$node.html(tpl);
 
   // hack process queue
   setTimeout(function() {
+    (scope.sync || noop).call(scope);
     (callback || noop).call(scope);
   });
 }
@@ -60,15 +81,16 @@ var Jedo = {
   
   createUI: function(settings) {
 
-    // scope variable for sharing context
-    var scope = {};
+    // define default setting
+    var default_setting = {
 
-    // set default method `setData`
-    if (settings.setData == null) {
-      settings.setData = function() {
+      model: function() {
         return {};
-      };
-    }
+      },
+
+      sync: noop
+
+    };
 
 
     /**
@@ -90,13 +112,22 @@ var Jedo = {
       
       render: function(selector, data, callback) {
 
-        // fire init method
-        (settings.init || noop).call(scope);
+        // clone setting and scope for multiple use for another selector
+        var _settings = $.extend( {}, default_setting, clone(settings) ),
+            scope = clone( $.extend( {}, this, _settings ) );
 
-        // assign this scope
-        scope = $.extend({}, this, settings);
-        scope.$data = $.extend({}, scope.setData(), data);
+        // assign this to scope
+        scope.$model = $.extend({}, scope.model(), data);
         scope.$node = $(selector);
+
+        // check node exist
+        if (scope.$node.length === 0) {
+          throw new Error('Not found element target for mount UI (your selector is `' + selector + '`)');
+        }
+
+        // fire init method
+        (_settings.init || noop).call(scope);
+
 
         // render template
         _render(scope, function() {
@@ -131,15 +162,17 @@ var Jedo = {
        */
       
       update: function(data, callback) {
+        var scope = this;
+
         if (data == null) { data = {}; }
 
         // extend data to scope
-        scope.$data = $.extend({}, scope.$data, data);
+        scope.$model = $.extend({}, scope.$model, data);
 
         // render update template
         _render(scope, function() {
           (callback || noop).call(scope);
-          (settings.afterUpdate || noop).call(scope);
+          (scope.afterUpdate || noop).call(scope);
         });
       }
 
