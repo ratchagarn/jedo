@@ -13,6 +13,7 @@ Jedo
 ### 0.2.0
 - Remove dependency from `jQuery`
 - Fixed many bug and change name of method.
+- Change variable name from `$node` to `node`
 
 
 ### 0.1.4

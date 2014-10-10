@@ -84,7 +84,7 @@ function _render(scope, callback) {
 
   // compile template
   var tpl = tmpl(scope.template.call(scope), scope.$model);
-  scope.$node.innerHTML = tpl;
+  scope.node.innerHTML = tpl;
 
   // hack process queue
   setTimeout(function() {
@@ -146,7 +146,7 @@ var Jedo = {
 
         // assign this to scope
         scope.$model = extend( scope.model(), data );
-        scope.$node = node;
+        scope.node = node;
 
         // fire init method
         (_settings.init || noop).call(scope);
