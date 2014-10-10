@@ -13,16 +13,25 @@ var Counter = Jedo.createUI({
   },
 
 
-  sync: function() {
+  afterRender: function() {
 
-    var $node = $(this.$node),
-        $button = $node.find('button'),
-        $count = $node.find('span');
-
-    $button.on('click', function() {
+    $(this.node).on('click', 'button', function() {
       this.update({ count: ++this.$model.count });
     }.bind(this));
+
   },
+
+
+  // sync: function() {
+
+  //   var $node = $(this.$node),
+  //       $button = $node.find('button'),
+  //       $count = $node.find('span');
+
+  //   $button.on('click', function() {
+  //     this.update({ count: ++this.$model.count });
+  //   }.bind(this));
+  // },
 
 
   template: function() {
@@ -30,7 +39,7 @@ var Counter = Jedo.createUI({
     return (
 
       '<div class="counter-ui">' +
-        '<button>Count</button>' +
+        '<button class="btn btn-default">Count</button>' +
         '<span class="count"><%= count %></span>' +
       '</div>'
 
