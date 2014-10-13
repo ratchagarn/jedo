@@ -64,8 +64,7 @@ var Test = Jedo.createUI({
 
   afterRender: function() {
     this.$node = ( this.$node || $(this.node) );
-
-    this.$node.on('submit', function(e) {
+    this.$node.on('click', 'button', function(e) {
       e.preventDefault();
       this.update({
         start_text: this.$node.find('input').val()
@@ -82,10 +81,8 @@ var Test = Jedo.createUI({
 
     return (
       '<div class="example-ui">' +
-        '<form>' +
-          '<input type="text" />' +
-          '<button type="submit">Submit</button>' +
-        '</form>' +
+        '<input type="text" />' +
+        '<button type="submit">Submit</button>' +
         '<p class="output"><%= start_text %></p>' +
       '</div>'
     );
