@@ -336,6 +336,11 @@ var Jedo = {
 
 
 // assign `Jedo` to globals scope
-globals.Jedo = Jedo;
+if (window !== undefined && globals !== window) {
+  window.Jedo = Jedo;
+}
+else {
+  globals.Jedo = Jedo;
+}
 
 }).call(this);
