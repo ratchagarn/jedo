@@ -1,5 +1,5 @@
 /*!
- * Jedo version 0.2.0
+ * Jedo version 0.2.1
  * Copyright 2014-Preset
  * Author: Ratchagarn
  * Licensed under MIT

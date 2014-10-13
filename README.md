@@ -61,7 +61,10 @@ Jedo
 
 var Test = Jedo.createUI({
 
+
   afterRender: function() {
+    this.$node = ( this.$node || $(this.node) );
+
     this.$node.on('submit', function(e) {
       e.preventDefault();
       this.update({
