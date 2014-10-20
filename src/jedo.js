@@ -158,6 +158,8 @@ var Jedo = {
           (scope.afterRender || noop).call(scope);
         });
 
+        return scope;
+
       },
 
 
