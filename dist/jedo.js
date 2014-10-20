@@ -1,5 +1,5 @@
 /*!
- * Jedo version 0.2.1
+ * Jedo version 0.2.2
  * Copyright 2014-Preset
  * Author: Ratchagarn
  * Licensed under MIT
@@ -286,6 +286,8 @@ var Jedo = {
           (callback || noop).call(scope);
           (scope.afterRender || noop).call(scope);
         });
+
+        return scope;
 
       },
 

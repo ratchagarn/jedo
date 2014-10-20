@@ -4,10 +4,14 @@ Jedo
 # Simple Javascript template component
 
 
-### Current Version: 0.2.1
+### Current Version: 0.2.2
 
 
 ## Change log
+
+
+### 0.2.2
+- Fixed bug use update form outside scope.
 
 
 ### 0.2.1
