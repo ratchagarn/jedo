@@ -1,5 +1,5 @@
 /*!
- * Jedo version 0.2.2
+ * Jedo version 0.2.3
  * Copyright 2014-Preset
  * Author: Ratchagarn
  * Licensed under MIT
@@ -158,6 +158,29 @@ function noop() {}
 
 
 /**
+ * Create dom from HTML string
+ * ------------------------------------------------------------
+ * @name domFromSrt
+ * @param {String} HTML string
+ * @return {Object} dom object
+ */
+
+function domFromStr(html) {
+  var frag = document.createDocumentFragment(),
+      temp = document.createElement('DIV');
+
+  temp.insertAdjacentHTML('beforeend', html);
+  while (temp.firstChild) {
+    frag.appendChild(temp.firstChild);
+  }
+
+  temp = null;
+  return frag;
+}
+
+
+
+/**
  * Deep extend object.
  * ============================================================
  * @name extend
@@ -212,14 +235,26 @@ function clone(from) {
 function _render(scope, callback) {
 
   // compile template
-  var tpl = tmpl(scope.template.call(scope), scope.$model);
-  scope.node.innerHTML = tpl;
+  var tpl = tmpl(scope.template.call(scope), scope.$model),
+      compile_tpl = domFromStr(tpl);
+
+  // scope.node.innerHTML = tpl;
+  if (scope.node.children.length > 0) {
+    scope.node.replaceChild( compile_tpl, scope.node.children[0] );
+  }
+  else {
+    scope.node.appendChild( compile_tpl );
+  }
+
+  // fire callback
+  (scope.sync || noop).call(scope);
+  (callback || noop).call(scope);
 
   // hack process queue
-  setTimeout(function() {
-    (scope.sync || noop).call(scope);
-    (callback || noop).call(scope);
-  });
+  // setTimeout(function() {
+  //   (scope.sync || noop).call(scope);
+  //   (callback || noop).call(scope);
+  // });
 }
 
 

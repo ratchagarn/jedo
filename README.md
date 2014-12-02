@@ -4,10 +4,14 @@ Jedo
 # Simple Javascript template component
 
 
-### Current Version: 0.2.2
+### Current Version: 0.2.3
 
 
 ## Change log
+
+
+### 0.2.3
+- Improve render performance.
 
 
 ### 0.2.2
